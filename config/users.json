@@ -1,0 +1,12 @@
+[
+    {
+        "email": "admin@hotmail.com",
+        "password": "$2y$10$tEV6n.Z6xr1r9XvvviFSBObHwbLi60m5YkyTBM3izvvzhz70g4szq",
+		"role": "admin"
+    },
+    {
+        "email": "test@hotmail.com",
+        "password": "$2y$10$\/kPtrm9RE.4vpWaS0b5WSut.lpmST5h.H9KWwLVeKqxV4RmSYkYq2",
+		"role": "user"
+    }
+]

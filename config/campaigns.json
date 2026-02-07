@@ -1,0 +1,79 @@
+[
+    {
+        "id": "cmp_6986e4b1b8e02",
+        "user": {
+            "email": "test@hotmail.com",
+            "password": "$2y$10$\/kPtrm9RE.4vpWaS0b5WSut.lpmST5h.H9KWwLVeKqxV4RmSYkYq2",
+            "role": "user"
+        },
+        "name": "ABAWBDAWDBAw",
+        "target_url": "https:\/\/pazarama.com",
+        "worker_domain": "cmp_6986e4b1b8e02.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_6986e4b1b8e02.js",
+        "devices": [
+            "desktop"
+        ],
+        "bot_filters": [
+            "headless",
+            "ua",
+            "js_challenge"
+        ],
+        "country": "TR",
+        "language": "tr",
+        "status": "pending",
+        "error": null,
+        "created_at": "2026-02-07 10:07:32"
+    },
+    {
+        "id": "cmp_6986e5ae39a66",
+        "user": {
+            "email": "test@hotmail.com",
+            "password": "$2y$10$\/kPtrm9RE.4vpWaS0b5WSut.lpmST5h.H9KWwLVeKqxV4RmSYkYq2",
+            "role": "user"
+        },
+        "name": "TEST 2",
+        "target_url": "https:\/\/pazarama.com",
+        "worker_domain": "cmp_6986e5ae39a66.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_6986e5ae39a66.js",
+        "devices": [
+            "desktop"
+        ],
+        "bot_filters": [
+            "datacenter",
+            "ua",
+            "behavior",
+            "js_challenge"
+        ],
+        "country": "TR",
+        "language": "tr",
+        "status": "pending",
+        "error": null,
+        "created_at": "2026-02-07 10:11:44"
+    },
+    {
+        "id": "cmp_6986e7ebe859f",
+        "user": {
+            "email": "test@hotmail.com",
+            "password": "$2y$10$\/kPtrm9RE.4vpWaS0b5WSut.lpmST5h.H9KWwLVeKqxV4RmSYkYq2",
+            "role": "user"
+        },
+        "name": "Test 3",
+        "target_url": "https:\/\/pazarama.com",
+        "worker_domain": "cmp_6986e7ebe859f.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_6986e7ebe859f.js",
+        "devices": [
+            "desktop"
+        ],
+        "bot_filters": [
+            "behavior",
+            "js_challenge",
+            "rate_limit",
+            "fingerprint"
+        ],
+        "country": "TR",
+        "language": "tr",
+        "status": "active",
+        "error": null,
+        "created_at": "2026-02-07 10:21:18"
+    }
+]
