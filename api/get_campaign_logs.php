@@ -17,7 +17,8 @@ if (!$campaignId) {
 $campaigns = json_decode(file_get_contents("../config/campaigns.json"), true) ?? [];
 $campaignExists = false;
 foreach ($campaigns as $c) {
-    if ($c['id'] === $campaignId && $c['user'] === $_SESSION['user']) {
+    $userEmail = is_array($c['user']) ? ($c['user']['email'] ?? '') : $c['user'];
+    if ($c['id'] === $campaignId && $userEmail === $_SESSION['user']) {
         $campaignExists = true;
         break;
     }
@@ -32,7 +33,7 @@ if (!$campaignExists) {
 $logs = json_decode(file_get_contents("../config/traffic_logs.json"), true) ?? [];
 $campaignLogs = array_filter($logs, fn($l) => $l['campaign_id'] === $campaignId);
 
-// En son 100 logu gönder (isteğe göre değiştirebilirsin)
+// En son 100 logu gönder
 $campaignLogs = array_slice($campaignLogs, -100);
 
 echo json_encode(array_values($campaignLogs));

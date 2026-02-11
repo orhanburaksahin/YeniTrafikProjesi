@@ -8,7 +8,6 @@ if (!$input) {
     exit;
 }
 
-// Log dizisine ekle
 $logsFile = __DIR__ . "/../config/traffic_logs.json";
 $logs = json_decode(file_get_contents($logsFile), true) ?? [];
 
@@ -17,10 +16,10 @@ $logs[] = [
     "ip" => $input['ip'] ?? null,
     "user_agent" => $input['user_agent'] ?? null,
     "status" => $input['status'] ?? null,
+    "detected_by" => $input['detected_by'] ?? null,
     "timestamp" => date("Y-m-d H:i:s"),
 ];
 
-// Dosyaya yaz
-file_put_contents($logsFile, json_encode($logs, JSON_PRETTY_PRINT));
+file_put_contents($logsFile, json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 echo json_encode(["success" => true]);
