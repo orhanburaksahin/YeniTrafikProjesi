@@ -31,7 +31,7 @@ file_put_contents($workerFile, $scriptContent);
 // 3️⃣ Cloudflare'a deploy et
 try {
     $deployer = new WorkerDeployer();
-    $workerDomain = $deployer->deploy($campaignId, $workerFile);
+    $workerDomain = $deployer->deploy($campaignId, $scriptContent);
     $status = "pending";
     $errorMessage = null;
 } catch (Exception $e) {
