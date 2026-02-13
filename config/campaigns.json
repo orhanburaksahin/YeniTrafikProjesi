@@ -1,27 +1,62 @@
 [
     {
-        "id": "cmp_69892f48e9376",
-        "user": {
-            "email": "test@hotmail.com",
-            "password": "$2y$10$\/kPtrm9RE.4vpWaS0b5WSut.lpmST5h.H9KWwLVeKqxV4RmSYkYq2",
-            "role": "user"
-        },
-        "name": "Test knk",
+        "id": "cmp_698d4b169c716",
+        "user": "test@hotmail.com",
+        "name": "VGVGVG",
         "target_url": "https:\/\/pazarama.com",
-        "worker_domain": true,
-        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_69892f48e9376.js",
+        "worker_domain": "https:\/\/cmp_698d4b169c716.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698d4b169c716.js",
+        "devices": [
+            "desktop"
+        ],
+        "bot_filters": [
+            "js_challenge",
+            "headless",
+            "datacenter",
+            "behavior",
+            "automation_flags",
+            "accept_mismatch",
+            "suspicious_referer",
+            "ip_entropy",
+            "rate_limit",
+            "header_consistency",
+            "tls_fingerprint",
+            "entropy",
+            "navigation_flow"
+        ],
+        "country": "TR",
+        "language": "tr",
+        "status": "active",
+        "error": null,
+        "created_at": "2026-02-12 06:38:02",
+        "settings": {
+            "enable_logging": "1",
+            "enable_rate_limit": "1"
+        }
+    },
+    {
+        "id": "cmp_698d4cd78acd6",
+        "user": "test@hotmail.com",
+        "name": "WWWWWWWWW",
+        "target_url": "https:\/\/pazarama.com",
+        "worker_domain": "https:\/\/cmp_698d4cd78acd6.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698d4cd78acd6.js",
         "devices": [
             "desktop"
         ],
         "bot_filters": [
             "headless",
             "datacenter",
-            "ua"
+            "ua",
+            "behavior",
+            "js_challenge",
+            "rate_limit",
+            "fingerprint"
         ],
         "country": "TR",
         "language": "tr",
         "status": "active",
         "error": null,
-        "created_at": "2026-02-09 03:50:19"
+        "created_at": "2026-02-12 06:45:30"
     }
 ]

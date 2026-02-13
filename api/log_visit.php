@@ -13,10 +13,12 @@ $logs = json_decode(file_get_contents($logsFile), true) ?? [];
 
 $logs[] = [
     "campaign_id" => $input['campaign_id'] ?? null,
-    "ip" => $input['ip'] ?? null,
-    "user_agent" => $input['user_agent'] ?? null,
-    "status" => $input['status'] ?? null,
-    "detected_by" => $input['detected_by'] ?? null,
+    "ip" => $input['ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? null),
+    "user_agent" => $input['user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? null),
+    "status" => $input['status'] ?? null, // allowed / bot_blocked / device_blocked / country_blocked
+    "detected_by" => $input['detected_by'] ?? null, // headless, ua, datacenter, vb.
+    "is_bot" => $input['is_bot'] ?? false,
+    "filter_hit" => $input['filter_hit'] ?? null,
     "timestamp" => date("Y-m-d H:i:s"),
 ];
 

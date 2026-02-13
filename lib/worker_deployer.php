@@ -5,15 +5,13 @@ class WorkerDeployer {
     private $accountId;
 
     public function __construct() {
-        // Cloudflare config dosyasından al
         $config = include __DIR__ . '/../config/cloudflare.php';
         $this->apiToken = $config['api_token'];
         $this->accountId = $config['account_id'];
     }
 
     /**
-     * Mevcut deploy fonksiyonunuzu buraya alıyoruz, değiştirmiyoruz
-     * Örneğin create_campaign.php bunu kullanıyor
+     * Worker deploy
      */
     public function deploy($workerName, $workerCode) {
         $url = "https://api.cloudflare.com/client/v4/accounts/{$this->accountId}/workers/scripts/{$workerName}";
@@ -35,11 +33,12 @@ class WorkerDeployer {
             throw new Exception("Cloudflare Worker deploy edilemedi: HTTP $httpcode, Response: $response");
         }
 
+        // Eski sistemde route oluşturulmuyor → worker subdomain otomatik
         return true;
     }
 
     /**
-     * Yeni eklenen deleteWorker fonksiyonu
+     * Worker sil
      */
     public function deleteWorker($workerName) {
         $url = "https://api.cloudflare.com/client/v4/accounts/{$this->accountId}/workers/scripts/{$workerName}";

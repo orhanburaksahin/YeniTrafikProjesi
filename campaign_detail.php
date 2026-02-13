@@ -26,8 +26,12 @@ if (!$campaign) {
     die("Kampanya bulunamadı veya yetkiniz yok.");
 }
 
+// Logları al
 $logs = json_decode(file_get_contents("config/traffic_logs.json"), true) ?? [];
 $campaignLogs = array_values(array_filter($logs, fn($l) => $l['campaign_id'] === $campaignId));
+
+// En yeni loglar en üstte
+$campaignLogs = array_reverse($campaignLogs);
 
 $humanCount = count(array_filter($campaignLogs, fn($l) => $l['status'] === 'allowed'));
 $botCount = count(array_filter($campaignLogs, fn($l) => $l['status'] !== 'allowed'));
@@ -49,6 +53,14 @@ function shortUserAgent($ua) {
 
     return $browser . ' · ' . $os;
 }
+
+// Logları temizleme işlemi
+if (isset($_POST['clear_logs'])) {
+    $logs = array_filter($logs, fn($l) => $l['campaign_id'] !== $campaignId);
+    file_put_contents("config/traffic_logs.json", json_encode(array_values($logs), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    header("Location: campaign_detail.php?id=$campaignId");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -61,27 +73,24 @@ function shortUserAgent($ua) {
 <body>
 
 <div class="d-flex">
-    <!-- Sidebar (Dashboard ile birebir) -->
+    <!-- Sidebar -->
     <div class="sidebar p-4 d-flex flex-column">
         <h4 class="mb-4">🚦 Traffic Guard</h4>
         <nav class="nav flex-column">
             <a class="nav-link" href="dashboard.php">📊 Dashboard</a>
             <a class="nav-link" href="new_campaign.php">➕ Yeni Kampanya</a>
+            <a href="edit_campaign.php?id=<?= $campaign['id'] ?>" class="btn btn-warning mb-3">⚙️ Kampanyayı Düzenle</a>
             <a href="logout.php" class="btn btn-danger btn-sm mt-3">Çıkış Yap</a>
         </nav>
-        <div class="mt-auto pt-4 text-muted small">
-            <?= htmlspecialchars($currentUserEmail) ?>
-        </div>
+        <div class="mt-auto pt-4 text-muted small"><?= htmlspecialchars($currentUserEmail) ?></div>
     </div>
 
     <!-- Main Content -->
     <div class="content flex-grow-1">
         <div class="row g-4">
-
-            <!-- Sol Alan: Ziyaretçi Kayıtları -->
             <div class="col-lg-8">
 
-                <!-- Üst İstatistik Kartları -->
+                <!-- İstatistik Kartları -->
                 <div class="stats-grid mb-4">
                     <div class="stat-card green">
                         <div class="stat-icon">👤</div>
@@ -90,7 +99,6 @@ function shortUserAgent($ua) {
                             <div class="stat-value"><?= $humanCount ?></div>
                         </div>
                     </div>
-
                     <div class="stat-card red">
                         <div class="stat-icon">🤖</div>
                         <div>
@@ -100,18 +108,22 @@ function shortUserAgent($ua) {
                     </div>
                 </div>
 
-                <!-- Ziyaretçi Kartları -->
+                <!-- Logları Temizle Butonu -->
+                <form method="post" class="mb-3">
+                    <button type="submit" name="clear_logs" class="btn btn-danger btn-sm">🗑️ Logları Temizle</button>
+                </form>
+
+                <!-- Ziyaretçi Kayıtları -->
                 <div class="campaign-section">
                     <h2>Ziyaretçi Kayıtları</h2>
-                    <p>Bu kampanyaya gelen tüm ziyaretçilerin kayıtları</p>
+                    <p>Bu kampanyaya gelen tüm ziyaretçilerin kayıtları (en yeni üstte)</p>
 
                     <?php if(count($campaignLogs) > 0): ?>
                         <?php foreach ($campaignLogs as $log): ?>
-                            <div class="campaign-card">
+                            <div class="campaign-card mb-2">
                                 <div class="campaign-header">
                                     <div class="campaign-title">
                                         <?= $log['status'] === 'allowed' ? '👤 İnsan Ziyaretçi' : '🤖 Bot Tespiti' ?>
-
                                         <?php if ($log['status'] === 'allowed'): ?>
                                             <span class="badge active">İzin Verildi</span>
                                         <?php else: ?>
@@ -119,14 +131,14 @@ function shortUserAgent($ua) {
                                         <?php endif; ?>
                                     </div>
                                 </div>
-
                                 <div class="campaign-meta mt-2">
                                     <div><strong>Zaman:</strong> <?= htmlspecialchars($log['timestamp']) ?></div>
                                     <div><strong>IP:</strong> <?= htmlspecialchars($log['ip']) ?></div>
                                     <div><strong>Cihaz:</strong> <?= shortUserAgent($log['user_agent'] ?? '') ?></div>
-
-                                    <?php if (!empty($log['detection_reason'])): ?>
-                                        <div><strong>Tespit Nedeni:</strong> <?= htmlspecialchars($log['detection_reason']) ?></div>
+                                    <div><strong>Ülke:</strong> <?= htmlspecialchars($log['country'] ?? 'Bilinmiyor') ?></div>
+                                    <?php if (!empty($log['is_bot'])): ?>
+                                        <?php $reason = $log['detected_by'] ?? $log['filter_hit'] ?? 'Bilinmiyor'; ?>
+                                        <div><strong>Tespit Nedeni:</strong> <?= htmlspecialchars($reason) ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -138,14 +150,13 @@ function shortUserAgent($ua) {
 
             </div>
 
-            <!-- Sağ Alan: Kampanya Bilgileri --> 
-             <!-- KAMPANYA BİLGİLERİ (SAĞ KUTU) -->
+            <!-- Sağ Alan: Kampanya Bilgileri -->
             <div class="col-lg-4">
                 <div class="card p-4 mb-4">
                     <h5 class="mb-3">Kampanya Bilgileri</h5>
                     <p><strong>Ad:</strong> <?= htmlspecialchars($campaign['name']) ?></p>
                     <p><strong>Hedef URL:</strong> <?= htmlspecialchars($campaign['target_url']) ?></p>
-                     <div class="mb-2"><strong>Durum:</strong>
+                    <div class="mb-2"><strong>Durum:</strong>
                         <?php if ($campaign['status'] === 'active'): ?>
                             <span class="badge bg-success">Aktif</span>
                         <?php elseif ($campaign['status'] === 'pending'): ?>
@@ -154,7 +165,6 @@ function shortUserAgent($ua) {
                             <span class="badge bg-danger">Hata</span>
                         <?php endif; ?>
                     </div>
-
                     <p><strong>Worker Link:</strong></p>
                     <?php if (!empty($campaign['worker_domain'])): ?>
                         <div class="d-flex align-items-center gap-2">
@@ -162,19 +172,15 @@ function shortUserAgent($ua) {
                                    value="https://<?= htmlspecialchars($campaign['id']) ?>.eragonn.workers.dev">
                             <button class="btn btn-sm btn-outline-primary" onclick="copyWorkerLink()">Kopyala</button>
                         </div>
-                    <?php else: ?>
-                        —
+                    <?php else: ?> —
                     <?php endif; ?>
-
                     <hr>
-
                     <p><strong>Aktif Bot Tespitleri:</strong></p>
                     <ul class="mb-3">
                         <?php foreach($campaign['bot_filters'] ?? [] as $bot): ?>
                             <li><?= htmlspecialchars($bot) ?></li>
                         <?php endforeach; ?>
                     </ul>
-
                     <p><strong>Aktif Cihaz Kuralları:</strong></p>
                     <ul>
                         <?php foreach($campaign['devices'] ?? [] as $device): ?>
@@ -185,19 +191,15 @@ function shortUserAgent($ua) {
             </div>
 
         </div>
-
         <a href="dashboard.php" class="btn btn-primary mt-4">⬅️ Dashboard'a Dön</a>
     </div>
 </div>
 
 <script>
 function copyWorkerLink() {
-    const text = document.getElementById('workerLink').innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Link kopyalandı!");
-    }).catch(() => {
-        alert("Link kopyalanamadı.");
-    });
+    const text = document.getElementById('workerLink').value;
+    navigator.clipboard.writeText(text).then(() => alert("Link kopyalandı!"))
+                                 .catch(() => alert("Link kopyalanamadı."));
 }
 </script>
 

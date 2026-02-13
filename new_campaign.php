@@ -74,6 +74,7 @@ $userCampaigns = array_filter($campaigns, fn($c) => $c['user'] === $currentUserE
 
                 <div class="col-md-12">
                     <label class="form-label">Cihaz Filtresi</label>
+                    <small class="d-block text-muted mb-2">Hiçbiri seçilmezse tüm cihazlar kabul edilir.</small>
                     <div class="d-flex flex-wrap gap-4">
                         <?php
                         $devices = [
@@ -95,6 +96,7 @@ $userCampaigns = array_filter($campaigns, fn($c) => $c['user'] === $currentUserE
 
                 <div class="col-md-12">
                     <label class="form-label">Bot Tespit Mekanizmaları</label>
+                    <small class="d-block text-muted mb-2">Seçilmezse sistem varsayılan korumayı uygular.</small>
                     <div class="d-flex flex-wrap gap-4">
                         <?php
                         $bots = [
@@ -108,7 +110,7 @@ $userCampaigns = array_filter($campaigns, fn($c) => $c['user'] === $currentUserE
                         ];
                         foreach ($bots as $val => $desc): ?>
                         <div class="form-check" style="min-width: 250px;">
-                            <input class="form-check-input" type="checkbox" name="bot_filters[]" value="<?= htmlspecialchars($val) ?>" id="bot_<?= htmlspecialchars($val) ?>">
+                            <input class="form-check-input" type="checkbox" name="bot_filters[]" value="<?= htmlspecialchars($val) ?>" id="bot_<?= htmlspecialchars($val) ?>" checked>
                             <label class="form-check-label" for="bot_<?= htmlspecialchars($val) ?>">
                                 <strong><?= htmlspecialchars(ucfirst(str_replace('_',' ',$val))) ?></strong>
                                 <small class="d-block text-muted"><?= htmlspecialchars($desc) ?></small>

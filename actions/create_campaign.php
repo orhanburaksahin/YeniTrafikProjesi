@@ -8,10 +8,39 @@ if (!isset($_SESSION['user'])) {
 require_once "../lib/worker_generator.php";
 require_once "../lib/worker_deployer.php";
 
+// Kullanıcı email'ini güvenli al
+$currentUser = is_array($_SESSION['user']) ? ($_SESSION['user']['email'] ?? '') : $_SESSION['user'];
+
 $name = trim($_POST['name']);
 $targetUrl = trim($_POST['target_url']);
 $devices = $_POST['devices'] ?? [];
 $botFilters = $_POST['bot_filters'] ?? [];
+
+// Eğer cihaz seçilmediyse → tüm cihazlar
+if (empty($devices)) {
+    $devices = ["desktop", "mobile", "tablet", "laptop"];
+}
+
+// 🔥 Eğer bot filtresi seçilmediyse → FULL KORUMA SETİ
+if (empty($botFilters)) {
+    $botFilters = [
+        "headless",
+        "datacenter",
+        "ua",
+        "behavior",
+        "js_challenge",
+        "rate_limit",
+        "fingerprint",
+        "automation_flags",
+        "accept_mismatch",
+        "suspicious_referer",
+        "ip_entropy",
+        "header_consistency",
+        "tls_fingerprint",
+        "entropy",
+        "navigation_flow"
+    ];
+}
 
 $campaignsFile = "../config/campaigns.json";
 $campaigns = json_decode(file_get_contents($campaignsFile), true) ?? [];
@@ -31,7 +60,10 @@ file_put_contents($workerFile, $scriptContent);
 // 3️⃣ Cloudflare'a deploy et
 try {
     $deployer = new WorkerDeployer();
-    $workerDomain = $deployer->deploy($campaignId, $scriptContent);
+    $deployer->deploy($campaignId, $scriptContent);
+
+    // 🔹 bindRoute() kaldırıldı, workers.dev linki otomatik
+    $workerDomain = "https://{$campaignId}.workers.dev"; // dashboard'da gösterilecek link
     $status = "pending";
     $errorMessage = null;
 } catch (Exception $e) {
@@ -43,7 +75,7 @@ try {
 // 4️⃣ Kampanya kaydet
 $newCampaign = [
     "id" => $campaignId,
-    "user" => $_SESSION['user'],
+    "user" => $currentUser,
     "name" => $name,
     "target_url" => $targetUrl,
     "worker_domain" => $workerDomain,
