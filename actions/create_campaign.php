@@ -8,6 +8,9 @@ if (!isset($_SESSION['user'])) {
 require_once "../lib/worker_generator.php";
 require_once "../lib/worker_deployer.php";
 
+// ✅ GLOBAL SECRET (log_visit.php ile birebir aynı olacak)
+$GLOBAL_SECRET = "cok_guclu_uzun_random_bir_secret_123XYZ";
+
 // Kullanıcı email'ini güvenli al
 $currentUser = is_array($_SESSION['user']) ? ($_SESSION['user']['email'] ?? '') : $_SESSION['user'];
 
@@ -47,8 +50,14 @@ $campaigns = json_decode(file_get_contents($campaignsFile), true) ?? [];
 
 $campaignId = uniqid("cmp_");
 
-// 1️⃣ Worker scripti üret
-$scriptContent = generateWorkerScript($campaignId, $targetUrl, $botFilters, $devices);
+// 1️⃣ Worker scripti üret (SECRET parametresi eklendi)
+$scriptContent = generateWorkerScript(
+    $campaignId,
+    $targetUrl,
+    $botFilters,
+    $devices,
+    $GLOBAL_SECRET // ✅ EKLENDİ
+);
 
 // 2️⃣ Worker dosyasını kaydet
 $workerDir = __DIR__ . "/../workers";

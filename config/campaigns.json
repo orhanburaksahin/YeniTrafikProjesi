@@ -1,11 +1,11 @@
 [
     {
-        "id": "cmp_698d4b169c716",
+        "id": "cmp_698edbd861046",
         "user": "test@hotmail.com",
-        "name": "VGVGVG",
+        "name": "TEST",
         "target_url": "https:\/\/pazarama.com",
-        "worker_domain": "https:\/\/cmp_698d4b169c716.workers.dev",
-        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698d4b169c716.js",
+        "worker_domain": "https:\/\/cmp_698edbd861046.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698edbd861046.js",
         "devices": [
             "desktop"
         ],
@@ -15,48 +15,21 @@
             "datacenter",
             "behavior",
             "automation_flags",
-            "accept_mismatch",
             "suspicious_referer",
             "ip_entropy",
             "rate_limit",
             "header_consistency",
             "tls_fingerprint",
             "entropy",
-            "navigation_flow"
+            "navigation_flow",
+            "behavioral_delay",
+            "fingerprint_v2"
         ],
         "country": "TR",
         "language": "tr",
         "status": "active",
         "error": null,
-        "created_at": "2026-02-12 06:38:02",
-        "settings": {
-            "enable_logging": "1",
-            "enable_rate_limit": "1"
-        }
-    },
-    {
-        "id": "cmp_698d4cd78acd6",
-        "user": "test@hotmail.com",
-        "name": "WWWWWWWWW",
-        "target_url": "https:\/\/pazarama.com",
-        "worker_domain": "https:\/\/cmp_698d4cd78acd6.workers.dev",
-        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698d4cd78acd6.js",
-        "devices": [
-            "desktop"
-        ],
-        "bot_filters": [
-            "headless",
-            "datacenter",
-            "ua",
-            "behavior",
-            "js_challenge",
-            "rate_limit",
-            "fingerprint"
-        ],
-        "country": "TR",
-        "language": "tr",
-        "status": "active",
-        "error": null,
-        "created_at": "2026-02-12 06:45:30"
+        "created_at": "2026-02-13 11:07:56",
+        "settings": []
     }
 ]

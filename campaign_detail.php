@@ -73,17 +73,25 @@ if (isset($_POST['clear_logs'])) {
 <body>
 
 <div class="d-flex">
-    <!-- Sidebar -->
-    <div class="sidebar p-4 d-flex flex-column">
-        <h4 class="mb-4">🚦 Traffic Guard</h4>
-        <nav class="nav flex-column">
-            <a class="nav-link" href="dashboard.php">📊 Dashboard</a>
-            <a class="nav-link" href="new_campaign.php">➕ Yeni Kampanya</a>
-            <a href="edit_campaign.php?id=<?= $campaign['id'] ?>" class="btn btn-warning mb-3">⚙️ Kampanyayı Düzenle</a>
-            <a href="logout.php" class="btn btn-danger btn-sm mt-3">Çıkış Yap</a>
+	 <!-- Sol Menü -->
+    <aside class="sidebar p-4 d-flex flex-column">
+        <div class="brand mb-4">
+            <div class="fw-bold fs-5 text-info">Traffic Guard</div>
+            <div class="text-muted small">Güvenlik Yönetim Paneli</div>
+        </div>
+
+        <nav class="nav flex-column mb-auto">
+            <a class="nav-link" href="dashboard.php">Dashboard</a>
+			<a href="edit_campaign.php?id=<?= $campaign['id'] ?>" class="btn btn-success mb-3">⚙️ Kampanyayı Düzenle</a>
+           <!-- <a class="nav-link" href="new_campaign.php">Yeni Kampanya Oluştur</a> -->
         </nav>
-        <div class="mt-auto pt-4 text-muted small"><?= htmlspecialchars($currentUserEmail) ?></div>
-    </div>
+
+        <div class="user-box mt-auto pt-3 border-top border-secondary">
+            <div class="small text-muted">Oturum açan kullanıcı</div>
+            <div class="fw-semibold"><?= htmlspecialchars($currentUserEmail) ?></div>
+            <a href="logout.php" class="btn btn-outline-danger btn-sm mt-3 w-100">Çıkış Yap</a>
+        </div>
+    </aside>
 
     <!-- Main Content -->
     <div class="content flex-grow-1">
@@ -112,6 +120,8 @@ if (isset($_POST['clear_logs'])) {
                 <form method="post" class="mb-3">
                     <button type="submit" name="clear_logs" class="btn btn-danger btn-sm">🗑️ Logları Temizle</button>
                 </form>
+				
+				
 
                 <!-- Ziyaretçi Kayıtları -->
                 <div class="campaign-section">
@@ -191,7 +201,7 @@ if (isset($_POST['clear_logs'])) {
             </div>
 
         </div>
-        <a href="dashboard.php" class="btn btn-primary mt-4">⬅️ Dashboard'a Dön</a>
+        <!-- <a href="dashboard.php" class="btn btn-primary mt-4">⬅️ Dashboard'a Dön</a> -->
     </div>
 </div>
 

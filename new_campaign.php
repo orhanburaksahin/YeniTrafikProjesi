@@ -23,20 +23,25 @@ $userCampaigns = array_filter($campaigns, fn($c) => $c['user'] === $currentUserE
 <body>
 
 <div class="d-flex">
-    <!-- Sidebar -->
-    <div class="sidebar p-4 d-flex flex-column">
-        <h4 class="mb-4">🚦 Traffic Guard</h4>
-        <nav class="nav flex-column">
-            <a class="nav-link" href="dashboard.php">📊 Dashboard</a>
-            <a class="nav-link active" href="new_campaign.php">➕ Yeni Kampanya</a>
-            <a class="nav-link" href="#">📈 Trafik Analizi</a>
-            <a class="nav-link" href="#">🛡️ Bot Koruma</a>
-            <a class="nav-link mt-3 btn btn-danger text-white text-center" href="logout.php">🚪 Çıkış</a>
-        </nav>
-        <div class="mt-auto pt-4 text-muted small">
-            <?= htmlspecialchars($currentUserEmail) ?>
+    <!-- Sol Menü -->
+    <aside class="sidebar p-4 d-flex flex-column">
+        <div class="brand mb-4">
+            <div class="fw-bold fs-5 text-info">Traffic Guard</div>
+            <div class="text-muted small">Güvenlik Yönetim Paneli</div>
         </div>
-    </div>
+
+        <nav class="nav flex-column mb-auto">
+            <a class="nav-link" href="dashboard.php">Dashboard</a>
+            <a class="nav-link active" href="dashboard.php">Yeni Kampanya</a>
+           <!-- <a class="nav-link" href="new_campaign.php">Yeni Kampanya Oluştur</a> -->
+        </nav>
+
+        <div class="user-box mt-auto pt-3 border-top border-secondary">
+            <div class="small text-muted">Oturum açan kullanıcı</div>
+            <div class="fw-semibold"><?= htmlspecialchars($currentUserEmail) ?></div>
+            <a href="logout.php" class="btn btn-outline-danger btn-sm mt-3 w-100">Çıkış Yap</a>
+        </div>
+    </aside>
 
     <!-- Main Content -->
     <div class="content flex-grow-1 p-4">

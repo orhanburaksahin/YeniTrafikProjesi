@@ -42,8 +42,8 @@ $blockedBots = count(array_filter($logs, fn($l) => $l['status'] !== 'allowed'));
         </div>
 
         <nav class="nav flex-column mb-auto">
-            <a class="nav-link active" href="dashboard.php">Genel Bakış</a>
-            <a class="nav-link" href="new_campaign.php">Yeni Kampanya Oluştur</a>
+            <a class="nav-link active" href="dashboard.php">Dashboard</a>
+           <!-- <a class="nav-link" href="new_campaign.php">Yeni Kampanya Oluştur</a> -->
         </nav>
 
         <div class="user-box mt-auto pt-3 border-top border-secondary">
@@ -60,7 +60,7 @@ $blockedBots = count(array_filter($logs, fn($l) => $l['status'] !== 'allowed'));
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="mb-1">Yönetim Paneli</h2>
-                <p class="text-muted mb-0">Tüm kampanyalarınızı ve güvenlik trafiğinizi buradan yönetin.</p>
+                <!-- <p class="text-muted mb-0">Tüm kampanyalarınızı ve güvenlik trafiğinizi buradan yönetin.</p> -->
             </div>
             <a href="new_campaign.php" class="btn btn-primary">+ Yeni Kampanya</a>
         </div>
@@ -105,7 +105,7 @@ $blockedBots = count(array_filter($logs, fn($l) => $l['status'] !== 'allowed'));
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <h4 class="mb-1">Kampanya Yönetimi</h4>
-                    <p class="text-muted mb-0">Oluşturduğunuz tüm kampanyaları buradan takip edebilirsiniz.</p>
+                   <!-- <p class="text-muted mb-0">Oluşturduğunuz tüm kampanyaları buradan takip edebilirsiniz.</p> -->
                 </div>
             </div>
 
