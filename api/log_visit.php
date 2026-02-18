@@ -46,6 +46,7 @@ $logs[] = [
     "campaign_id" => $input['campaign_id'] ?? null,
     "ip" => $input['ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? null),
     "user_agent" => $input['user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? null),
+    "country" => $input['country'] ?? null, // ✅ EKLENDİ
     "status" => $input['status'] ?? null,
     "detected_by" => $input['detected_by'] ?? null,
     "is_bot" => $input['is_bot'] ?? false,
@@ -53,6 +54,7 @@ $logs[] = [
     "timestamp" => date("Y-m-d H:i:s"),
     "log_token" => $logToken
 ];
+
 
 file_put_contents($logsFile, json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 

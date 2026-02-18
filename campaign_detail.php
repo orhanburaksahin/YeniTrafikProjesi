@@ -61,6 +61,100 @@ if (isset($_POST['clear_logs'])) {
     header("Location: campaign_detail.php?id=$campaignId");
     exit;
 }
+function countryCodeToName($code) {
+
+    if (!$code) return "Geçersiz Ülke";
+
+    $code = strtoupper($code);
+
+    $countries = [
+
+        // 🇪🇺 Avrupa
+        "TR" => "Türkiye",
+        "DE" => "Almanya",
+        "FR" => "Fransa",
+        "GB" => "Birleşik Krallık",
+        "IT" => "İtalya",
+        "ES" => "İspanya",
+        "NL" => "Hollanda",
+        "BE" => "Belçika",
+        "AT" => "Avusturya",
+        "CH" => "İsviçre",
+        "SE" => "İsveç",
+        "NO" => "Norveç",
+        "DK" => "Danimarka",
+        "FI" => "Finlandiya",
+        "PL" => "Polonya",
+        "RO" => "Romanya",
+        "GR" => "Yunanistan",
+        "PT" => "Portekiz",
+        "HU" => "Macaristan",
+        "CZ" => "Çekya",
+        "UA" => "Ukrayna",
+        "BG" => "Bulgaristan",
+        "RS" => "Sırbistan",
+
+        // 🇺🇸 Amerika
+        "US" => "Amerika Birleşik Devletleri",
+        "CA" => "Kanada",
+        "MX" => "Meksika",
+        "BR" => "Brezilya",
+        "AR" => "Arjantin",
+        "CL" => "Şili",
+        "CO" => "Kolombiya",
+        "PE" => "Peru",
+
+        // 🌏 Asya
+        "CN" => "Çin",
+        "JP" => "Japonya",
+        "KR" => "Güney Kore",
+        "IN" => "Hindistan",
+        "ID" => "Endonezya",
+        "MY" => "Malezya",
+        "SG" => "Singapur",
+        "TH" => "Tayland",
+        "VN" => "Vietnam",
+        "PH" => "Filipinler",
+        "PK" => "Pakistan",
+
+        // 🌍 Orta Doğu
+        "AE" => "Birleşik Arap Emirlikleri",
+        "SA" => "Suudi Arabistan",
+        "QA" => "Katar",
+        "KW" => "Kuveyt",
+        "IR" => "İran",
+        "IQ" => "Irak",
+        "IL" => "İsrail",
+        "JO" => "Ürdün",
+        "LB" => "Lübnan",
+
+        // 🌍 Afrika
+        "ZA" => "Güney Afrika",
+        "EG" => "Mısır",
+        "NG" => "Nijerya",
+        "MA" => "Fas",
+        "DZ" => "Cezayir",
+
+        // 🌏 Okyanusya
+        "AU" => "Avustralya",
+        "NZ" => "Yeni Zelanda"
+    ];
+
+    return $countries[$code] ?? "Bilinmeyen Ülke ($code)";
+}
+
+
+function countryCodeToFlag($code) {
+    if (!$code || strlen($code) !== 2) return "";
+
+    $code = strtoupper($code);
+    return mb_chr(127397 + ord($code[0]), 'UTF-8') .
+           mb_chr(127397 + ord($code[1]), 'UTF-8');
+}
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -145,7 +239,23 @@ if (isset($_POST['clear_logs'])) {
                                     <div><strong>Zaman:</strong> <?= htmlspecialchars($log['timestamp']) ?></div>
                                     <div><strong>IP:</strong> <?= htmlspecialchars($log['ip']) ?></div>
                                     <div><strong>Cihaz:</strong> <?= shortUserAgent($log['user_agent'] ?? '') ?></div>
-                                    <div><strong>Ülke:</strong> <?= htmlspecialchars($log['country'] ?? 'Bilinmiyor') ?></div>
+                                    <?php
+$countryCode = strtoupper($log['country'] ?? '');
+
+if (!$countryCode) {
+    $countryDisplay = "Bilinmeyen Ülke";
+} else {
+    $countryName = countryCodeToName($countryCode);
+    $flagUrl = "https://flagcdn.com/24x18/" . strtolower($countryCode) . ".png";
+
+    $countryDisplay = '<img src="' . $flagUrl . '" 
+        style="width:24px;height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> 
+        ' . htmlspecialchars($countryName);
+}
+?>
+
+<div><?= $countryDisplay ?></div>
+
                                     <?php if (!empty($log['is_bot'])): ?>
                                         <?php $reason = $log['detected_by'] ?? $log['filter_hit'] ?? 'Bilinmiyor'; ?>
                                         <div><strong>Tespit Nedeni:</strong> <?= htmlspecialchars($reason) ?></div>
