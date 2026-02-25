@@ -13,5 +13,20 @@
         "email": "test@test.net",
         "password": "$2y$10$iBn945nGpsUhF5nJWUdwWO3mQy6Vvw2j2YoRQT.ek95w3X7XvMIGO",
         "role": "user"
+    },
+    {
+        "email": "x@x.com",
+        "password": "$2y$10$HkanXNsXQrK13gae07vpOOta2SSnOWoMJLAjFxgg3X9SakS3M7vBK",
+        "role": "user"
+    },
+    {
+        "email": "tesst@test.net",
+        "password": "$2y$10$EmTmz0Ak4\/zCmp.aubDKUeXZsO7sa9z5jyMANlEY1rsWhmEzXYfmG",
+        "role": "user"
+    },
+    {
+        "email": "seas12@gmail.com",
+        "password": "$2y$10$YGrRKpdneLy4d07T6FcOA.4M5HamOAkzyq3F0ZA.w8gB3celNoXhi",
+        "role": "user"
     }
 ]

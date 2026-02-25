@@ -22,5 +22,17 @@
         "filter_hit": "behavioral_delay",
         "timestamp": "2026-02-15 08:02:12",
         "log_token": null
+    },
+    {
+        "campaign_id": "cmp_698edbd861046",
+        "ip": "188.119.27.181",
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Safari\/537.36",
+        "country": "TR",
+        "status": "allowed",
+        "detected_by": null,
+        "is_bot": false,
+        "filter_hit": null,
+        "timestamp": "2026-02-25 03:20:19",
+        "log_token": null
     }
 ]
