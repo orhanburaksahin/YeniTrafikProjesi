@@ -31,9 +31,13 @@ if (!$campaignExists) {
 
 // Logları filtrele
 $logs = json_decode(file_get_contents("../config/traffic_logs.json"), true) ?? [];
-$campaignLogs = array_filter($logs, fn($l) => $l['campaign_id'] === $campaignId);
+$campaignLogs = array_filter($logs, fn($l) => ($l['campaign_id'] ?? '') === $campaignId);
 
-// En son 100 logu gönder
-$campaignLogs = array_slice($campaignLogs, -100);
+// En yeniler üstte olsun
+$campaignLogs = array_reverse($campaignLogs);
+
+// Sadece son 100 log (opsiyonel)
+// $campaignLogs = array_slice($campaignLogs, 0, 100);
 
 echo json_encode(array_values($campaignLogs));
+?>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biyografi & Kargo Takip</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Stilleri */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: #ffcc00;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Ana İçerik */
+        main {
+            padding: 2.5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: #1e3c72;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: #2a5298;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        /* Biyografi Kartı */
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+        
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid #f0f4ff;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-name {
+            font-size: 2.2rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-title {
+            font-size: 1.2rem;
+            color: #2a5298;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .profile-bio {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            color: #555;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background-color: #f0f4ff;
+            border-radius: 50%;
+            color: #2a5298;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: #2a5298;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* Kargo Takip Bölümü */
+        .tracking-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+        }
+        
+        .tracking-description {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #555;
+            font-size: 1.05rem;
+        }
+        
+        .tracking-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tracking-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.8rem 1.5rem;
+            background-color: #f8faff;
+            border: 2px solid #e3e9ff;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .tracking-btn:hover {
+            background-color: #eef2ff;
+            border-color: #2a5298;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(42, 82, 152, 0.1);
+        }
+        
+        .tracking-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1e3c72;
+        }
+        
+        .tracking-btn-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+        
+        .tracking-btn-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* Kargo Takip Formu */
+        .tracking-form-container {
+            background-color: #f8faff;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-left: 5px solid #2a5298;
+        }
+        
+        .form-title {
+            color: #1e3c72;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tracking-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+        
+        .submit-btn {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            min-width: 150px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #1e3c72;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #1a1a2e;
+            color: #ddd;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background-color: #2a5298;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Tasarım */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1.5rem;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+            
+            .profile-card {
+                padding: 1.8rem;
+            }
+            
+            .profile-name {
+                font-size: 1.8rem;
+            }
+            
+            .tracking-section {
+                padding: 1.8rem;
+            }
+            
+            .tracking-form {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Bölümü -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-user-tie"></i>
+                <span>Biyografi & Kargo Takip</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#profile" class="active">Profil</a></li>
+                    <li><a href="#tracking">Kargo Takip</a></li>
+                    <li><a href="#contact">İletişim</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Biyografi Bölümü -->
+        <section id="profile">
+            <h2 class="section-title">Profilim</h2>
+            <div class="profile-card">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profil Resmi" class="profile-img">
+                <h1 class="profile-name">Ahmet Yılmaz</h1>
+                <div class="profile-title">Lojistik Müdürü & E-ticaret Danışmanı</div>
+                <p class="profile-bio">
+                    15 yılı aşkın süredir lojistik ve tedarik zinciri yönetimi alanında çalışmaktayım. Üç farklı kıtada projeler yönettim ve şu anda önde gelen bir e-ticaret firmasında lojistik operasyonlarından sorumluyum. Kargo ve nakliye süreçlerinin optimizasyonu, müşteri memnuniyeti ve dijital dönüşüm konularında uzmanım. Ayrıca, lojistik teknolojileri ve sürdürülebilir tedarik zinciri üzerine danışmanlık hizmetleri veriyorum.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kargo Takip Bölümü -->
+        <section id="tracking">
+            <h2 class="section-title">Kargo Takip</h2>
+            <div class="tracking-section">
+                <p class="tracking-description">
+                    Aşağıdaki butonlardan kargo firmalarının takip sayfalarına hızlıca ulaşabilir veya takip numaranızı doğrudan aşağıdaki formdan sorgulayabilirsiniz.
+                </p>
+                
+                <div class="tracking-buttons">
+                    <a href="https://www.yurticikargo.com" target="_blank" class="tracking-btn">
+                        <i class="fas fa-shipping-fast"></i>
+                        <div class="tracking-btn-title">Yurtiçi Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                    
+                    <a href="https://www.mngkargo.com.tr" target="_blank" class="tracking-btn">
+                        <i class="fas fa-truck"></i>
+                        <div class="tracking-btn-title">MNG Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                    
+                    <a href="https://www.aras.kargo.com.tr" target="_blank" class="tracking-btn">
+                        <i class="fas fa-box"></i>
+                        <div class="tracking-btn-title">Aras Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                    
+                    <a href="https://www.ptt.gov.tr" target="_blank" class="tracking-btn">
+                        <i class="fas fa-mail-bulk"></i>
+                        <div class="tracking-btn-title">PTT Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                    
+                    <a href="https://www.suratkargo.com.tr" target="_blank" class="tracking-btn">
+                        <i class="fas fa-parachute-box"></i>
+                        <div class="tracking-btn-title">Sürat Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                    
+                    <a href="https://www.ups.com/tr/tr/Home.page" target="_blank" class="tracking-btn">
+                        <i class="fas fa-globe"></i>
+                        <div class="tracking-btn-title">UPS Kargo</div>
+                        <div class="tracking-btn-desc">Kargo takip için tıklayın</div>
+                    </a>
+                </div>
+                
+                <div class="tracking-form-container">
+                    <h3 class="form-title"><i class="fas fa-search"></i> Kargo Sorgulama</h3>
+                    <form class="tracking-form" id="trackingForm">
+                        <div class="form-group">
+                            <label for="courier">Kargo Firması</label>
+                            <select id="courier" name="courier" required>
+                                <option value="">Firma Seçiniz</option>
+                                <option value="yurtici">Yurtiçi Kargo</option>
+                                <option value="mng">MNG Kargo</option>
+                                <option value="aras">Aras Kargo</option>
+                                <option value="ptt">PTT Kargo</option>
+                                <option value="surat">Sürat Kargo</option>
+                                <option value="ups">UPS Kargo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="trackingNumber">Takip Numarası</label>
+                            <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Örn: XYZ123456789" required>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Kargomı Sorgula</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Bölümü -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>İletişim Bilgileri</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
+                        <li><i class="fas fa-phone"></i> +90 (555) 123 45 67</li>
+                        <li><i class="fas fa-envelope"></i> info@ahmetyilmaz.com</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Hızlı Bağlantılar</h3>
+                    <ul>
+                        <li><a href="#profile">Profilim</a></li>
+                        <li><a href="#tracking">Kargo Takip</a></li>
+                        <li><a href="#">Blog Yazılarım</a></li>
+                        <li><a href="#">Referanslar</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Kargo Firmaları</h3>
+                    <ul>
+                        <li><a href="https://www.yurticikargo.com" target="_blank">Yurtiçi Kargo</a></li>
+                        <li><a href="https://www.mngkargo.com.tr" target="_blank">MNG Kargo</a></li>
+                        <li><a href="https://www.aras.kargo.com.tr" target="_blank">Aras Kargo</a></li>
+                        <li><a href="https://www.ptt.gov.tr" target="_blank">PTT Kargo</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 Ahmet Yılmaz. Tüm hakları saklıdır.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Form gönderimi için basit bir kontrol
+        document.getElementById('trackingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const courier = document.getElementById('courier').value;
+            const trackingNumber = document.getElementById('trackingNumber').value;
+            
+            if (!courier || !trackingNumber) {
+                alert('Lütfen kargo firması ve takip numarası giriniz.');
+                return;
+            }
+            
+            // Gerçek bir uygulamada burada API çağrısı yapılır
+            // Şimdilik sadece bilgi mesajı gösterelim
+            const courierNames = {
+                'yurtici': 'Yurtiçi Kargo',
+                'mng': 'MNG Kargo',
+                'aras': 'Aras Kargo',
+                'ptt': 'PTT Kargo',
+                'surat': 'Sürat Kargo',
+                'ups': 'UPS Kargo'
+            };
+            
+            alert(`Kargo Sorgulama İsteği:\nFirma: ${courierNames[courier]}\nTakip No: ${trackingNumber}\n\nBu bir demo uygulamasıdır. Gerçek uygulamada kargo durumu gösterilir.`);
+            
+            // Formu temizle
+            document.getElementById('trackingForm').reset();
+        });
+        
+        // Navigasyon linklerine aktif sınıfı ekleme
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('nav a').forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+
+
+</body>
+</html>
+

@@ -7,21 +7,26 @@
         "worker_domain": "https:\/\/cmp_698edbd861046.workers.dev",
         "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_698edbd861046.js",
         "devices": [
-            "desktop"
+            "mobile"
         ],
         "bot_filters": [
             "js_challenge",
             "headless",
             "datacenter",
+            "rate_limit",
+            "encoding_check",
             "behavior",
             "automation_flags",
             "suspicious_referer",
-            "ip_entropy",
-            "rate_limit",
             "header_consistency",
+            "navigation_flow",
+            "lang_country_check",
+            "referrer_check",
+            "header_integrity",
+            "ip_entropy",
             "tls_fingerprint",
             "entropy",
-            "navigation_flow",
+            "tls_ua_check",
             "behavioral_delay",
             "fingerprint_v2"
         ],
@@ -30,6 +35,33 @@
         "status": "active",
         "error": null,
         "created_at": "2026-02-13 11:07:56",
-        "settings": []
+        "settings": {
+            "enable_logging": "1"
+        }
+    },
+    {
+        "id": "cmp_69a350bb8f29a",
+        "user": "test@hotmail.com",
+        "name": "Sahin",
+        "target_url": "https:\/\/www.yurticikargo.com\/",
+        "worker_domain": "https:\/\/cmp_69a350bb8f29a.workers.dev",
+        "worker_file": "C:\\xampp\\htdocs\\actions\/..\/workers\/cmp_69a350bb8f29a.js",
+        "devices": [
+            "desktop"
+        ],
+        "bot_filters": [
+            "headless",
+            "datacenter",
+            "ua",
+            "behavior",
+            "js_challenge",
+            "rate_limit",
+            "fingerprint"
+        ],
+        "country": "TR",
+        "language": "tr",
+        "status": "pending",
+        "error": null,
+        "created_at": "2026-02-28 23:32:01"
     }
 ]
